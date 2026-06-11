@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "clario": {
+      "type": "stdio",
+      "command": "C:\\Users\\LENONO\\.clario\\runtime\\node-win32-x64.exe",
+      "args": [
+        "C:\\Users\\LENONO\\.clario\\mcp-server\\index.js"
+      ],
+      "env": {
+        "CLAR_WORKSPACE": "d:\\Coding Files\\Web Dev\\Web Development Files\\Internship\\assign-4",
+        "CLAR_API_URL": "https://hub.clario.chat",
+        "PATH": "C:\\Users\\LENONO\\.clario\\runtime;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\java8path;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Program Files\\nodejs\\;C:\\Program Files\\NVIDIA Corporation\\NVIDIA App\\NvDLISR;C:\\Program Files\\Git\\cmd;C:\\Program Files\\Docker\\Docker\\resources\\bin;C:\\Program Files\\GitHub CLI\\;C:\\Users\\LENONO\\.local\\bin;C:\\Users\\LENONO\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\LENONO\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\MinGW\\bin;C:\\MinGW\\;C:\\Users\\LENONO\\AppData\\Roaming\\npm;C:\\Program Files\\nodejs;C:\\Program Files\\Git\\bin;C:\\Program Files\\Git\\cmd;C:\\Users\\LENONO\\.local\\bin;C:\\Users\\LENONO\\.local\\bin;C:\\Users\\LENONO\\.local\\bin;C:\\Users\\LENONO\\AppData\\Local\\PowerToys\\DSCModules\\;C:\\Users\\LENONO\\AppData\\Local\\Programs\\Antigravity IDE\\bin"
+      }
+    }
+  }
+}

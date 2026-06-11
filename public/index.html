@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Access Gateway</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
+    </div>
+
+    <div class="container" id="main-container">
+        <!-- Notification Area -->
+        <div id="notification" class="notification hidden"></div>
+
+        <!-- Login Form -->
+        <div class="form-wrapper" id="login-wrapper">
+            <div class="header">
+                <h2>Welcome Back</h2>
+                <p>Enter your credentials to access your secure vault.</p>
+            </div>
+            <form id="login-form">
+                <div class="input-group">
+                    <input type="text" id="login-username" required autocomplete="off">
+                    <label for="login-username">Username</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="login-password" required autocomplete="off">
+                    <label for="login-password">Password</label>
+                </div>
+                <button type="submit" class="btn primary-btn" id="login-btn">
+                    <span class="btn-text">Authenticate</span>
+                    <div class="loader hidden" id="login-loader"></div>
+                </button>
+            </form>
+            <div class="switch-form">
+                <p>New to the system? <a href="#" id="to-register">Request Access</a></p>
+            </div>
+        </div>
+
+        <!-- 2FA Verification Form -->
+        <div class="form-wrapper hidden" id="tfa-wrapper">
+            <div class="header">
+                <h2>Two-Factor Auth</h2>
+                <p>Enter the 6-digit code from your authenticator app.</p>
+            </div>
+            <form id="tfa-form">
+                <div class="input-group">
+                    <input type="text" id="tfa-token" required autocomplete="off" maxlength="6" pattern="[0-9]{6}">
+                    <label for="tfa-token">Auth Code</label>
+                </div>
+                <button type="submit" class="btn primary-btn" id="tfa-btn">
+                    <span class="btn-text">Verify Code</span>
+                    <div class="loader hidden" id="tfa-loader"></div>
+                </button>
+            </form>
+            <div class="switch-form">
+                <p><a href="#" id="tfa-cancel">Cancel Login</a></p>
+            </div>
+        </div>
+
+        <!-- Register Form -->
+        <div class="form-wrapper hidden" id="register-wrapper">
+            <div class="header">
+                <h2>Create Identity</h2>
+                <p>Register a new secure profile.</p>
+            </div>
+            <form id="register-form">
+                <div class="input-group">
+                    <input type="text" id="reg-username" required autocomplete="off" minlength="3">
+                    <label for="reg-username">Username (Min 3 chars)</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="reg-password" required autocomplete="off" minlength="6">
+                    <label for="reg-password">Password (Min 6 chars)</label>
+                </div>
+                <button type="submit" class="btn primary-btn" id="reg-btn">
+                    <span class="btn-text">Initialize Profile</span>
+                    <div class="loader hidden" id="reg-loader"></div>
+                </button>
+            </form>
+            <div class="switch-form">
+                <p>Already established? <a href="#" id="to-login">Access Portal</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
