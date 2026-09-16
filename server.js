@@ -1,6 +1,8 @@
 const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 const path = require('path');
@@ -13,18 +15,55 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Browser security headers. The policy permits the Google-hosted font used by
+// the demo while keeping scripts, frames, and embedded objects locked down.
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+            fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+            imgSrc: ["'self'", 'data:'],
+            connectSrc: ["'self'"],
+            objectSrc: ["'none'"],
+            baseUri: ["'self'"],
+            frameAncestors: ["'none'"],
+            // This project is also run over plain HTTP for local screenshots.
+            upgradeInsecureRequests: null,
+        },
+    },
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+    permissionsPolicy: {
+        features: { geolocation: [], microphone: [], camera: [] },
+    },
+}));
+app.use((req, res, next) => {
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    next();
+});
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
-    secret: 'super_secret_session_key_for_assign_4',
+    secret: process.env.SESSION_SECRET || 'dev_only_change_me',
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        secure: false, // Set to true if using HTTPS
+        secure: process.env.NODE_ENV === 'production',
         httpOnly: true, // Prevents client-side JS from reading the cookie
         maxAge: 1000 * 60 * 60 * 24 // 1 day
     }
 }));
+
+// Keep repeated authentication attempts bounded in this in-memory demo.
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 100,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    message: { error: 'Too many authentication requests. Please try again later.' },
+});
 
 // Auth Middleware
 const requireAuth = (req, res, next) => {
@@ -38,7 +77,7 @@ const requireAuth = (req, res, next) => {
 // --- Routes ---
 
 // Register
-app.post('/api/register', [
+app.post('/api/register', authLimiter, [
     body('username').trim().isLength({ min: 3 }).withMessage('Username must be at least 3 characters long').escape(),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long')
 ], async (req, res) => {
@@ -51,7 +90,7 @@ app.post('/api/register', [
 
     try {
         // Hash password
-        const saltRounds = 10;
+        const saltRounds = 12;
         const passwordHash = await bcrypt.hash(password, saltRounds);
 
         // Insert using parameterized query (SQL Injection Protection)
@@ -70,7 +109,7 @@ app.post('/api/register', [
 });
 
 // Login (Step 1)
-app.post('/api/login', [
+app.post('/api/login', authLimiter, [
     body('username').trim().escape(),
     body('password').notEmpty()
 ], (req, res) => {
@@ -98,7 +137,7 @@ app.post('/api/login', [
 });
 
 // Login (Step 2 - 2FA Verify)
-app.post('/api/login/2fa', (req, res) => {
+app.post('/api/login/2fa', authLimiter, (req, res) => {
     if (!req.session.userId) return res.status(400).json({ error: 'Session expired. Please login again.' });
 
     const { token } = req.body;
@@ -155,7 +194,7 @@ app.post('/api/2fa/setup', requireAuth, (req, res) => {
 });
 
 // 2FA Enable - Verify token to enable
-app.post('/api/2fa/enable', requireAuth, (req, res) => {
+app.post('/api/2fa/enable', authLimiter, requireAuth, (req, res) => {
     const { token } = req.body;
 
     db.get('SELECT two_factor_secret FROM users WHERE id = ?', [req.session.userId], (err, user) => {
